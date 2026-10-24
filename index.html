@@ -258,6 +258,28 @@ dialog::backdrop{background:rgba(5,8,12,.72);backdrop-filter:blur(6px)}
 .note{font-size:13.5px;color:var(--muted);border-left:2px solid var(--accent);padding-left:12px}
 @media (max-width:760px){.dlg{grid-template-columns:1fr}.dlg .cover{min-height:260px;aspect-ratio:16/10}}
 
+
+/* platform picker */
+.plat-tabs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.plat{display:grid;gap:6px;text-align:left;padding:16px 16px 14px;border-radius:14px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer;transition:border-color .2s ease,background .2s ease,transform .2s ease}
+.plat:hover{border-color:var(--accent-2);transform:translateY(-2px)}
+.plat-name{font:850 clamp(20px,2.2vw,26px)/1 var(--f-display);font-stretch:72%;text-transform:uppercase;letter-spacing:.01em}
+.plat-count{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.plat[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.plat[aria-selected="true"] .plat-count{color:rgba(255,255,255,.85)}
+@media (max-width:860px){.plat-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:520px){.plat-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.plat{padding:13px 14px}.plat-name{font-size:21px}}
+.plat{min-width:0}.plat-name{overflow-wrap:anywhere}
+.plat-panel{margin-top:8px}
+.group{margin-top:44px}
+.group-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding-bottom:14px;margin-bottom:22px;border-bottom:1px solid var(--line)}
+.group-head h3{font:850 clamp(26px,3.2vw,38px)/1 var(--f-display);font-stretch:70%;text-transform:uppercase}
+.group-head p{color:var(--muted);font-size:15px;margin-top:6px}
+.group-count{flex:none;font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-2);border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+.plat-empty{margin-top:36px;padding:32px;border:1px dashed var(--line);border-radius:18px;display:grid;gap:12px;justify-items:start;max-width:720px}
+.plat-empty h3{font:850 34px/1 var(--f-display);font-stretch:70%;text-transform:uppercase}
+.plat-empty p{color:var(--muted)}
+
 /* experience */
 .exp-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(32px,5vw,72px);align-items:start}
 .road{list-style:none;margin:0;padding:0;display:grid}
@@ -625,21 +647,13 @@ form.msg{background:var(--bg-2);border:1px solid var(--line);border-radius:20px;
       <div class="sec-head">
         <div>
           <p class="label"><b>04</b> · Projects &amp; portfolio</p>
-          <h2>Real cases, <span class="serif">real results</span></h2>
+          <h2>Want to know more <span class="serif">about my work?</span></h2>
         </div>
-        <p class="lead">Real recovery cases, fake-account removals, verification and design work. Tap any project for the story and the original post on Instagram.</p>
+        <p class="lead">Pick a platform to see the real cases I've handled there, sorted into account recovery, fake profile takedowns and other issues. Each case links to the original post.</p>
       </div>
 
-      <div class="filters" role="group" aria-label="Filter projects">
-        <button class="filter" type="button" data-f="all" aria-pressed="true">All</button>
-        <button class="filter" type="button" data-f="recovery" aria-pressed="false">Account recovery</button>
-        <button class="filter" type="button" data-f="fake" aria-pressed="false">Fake account removal</button>
-        <button class="filter" type="button" data-f="security" aria-pressed="false">Security &amp; verification</button>
-        <button class="filter" type="button" data-f="design" aria-pressed="false">Design &amp; motion</button>
-      </div>
-
-      <div class="work-grid" id="workGrid"></div>
-      <div class="more-row"><button class="btn btn-ghost" type="button" id="moreBtn">Show all projects</button></div>
+      <div class="plat-tabs" id="platTabs" role="tablist" aria-label="Choose a platform"></div>
+      <div id="platPanel" class="plat-panel" aria-live="polite"></div>
 
       <div class="work-foot">
         <p>74 posts and counting: recovery stories, security tips and design work. Follow along on Instagram, and see client feedback in the Feedback highlight.</p>
@@ -798,7 +812,7 @@ form.msg{background:var(--bg-2);border:1px solid var(--line);border-radius:20px;
           <div class="field">
             <label for="f-platform">Platform</label>
             <select id="f-platform" name="platform">
-              <option>Instagram</option><option>Facebook</option><option>TikTok</option><option>YouTube</option><option>WhatsApp</option><option>Not about a platform</option>
+              <option>Facebook</option><option>Instagram</option><option>TikTok</option><option>LinkedIn</option><option>Snapchat</option><option>YouTube</option><option>WhatsApp</option><option>Not about a platform</option>
             </select>
           </div>
         </div>
@@ -830,129 +844,232 @@ form.msg{background:var(--bg-2);border:1px solid var(--line);border-radius:20px;
 
 <script>
 /* ===== PORTFOLIO DATA =====
-   Each project: img = file in media-, link = Instagram post. Add new ones at the top. */
+   p = platform (instagram, facebook, tiktok, linkedin, snapchat, youtube)
+   t = type (recovery, takedown, other). img = file in media-, link = Instagram post. */
 const IG = 'https://www.instagram.com';
 const PROJECTS = [
-  {id:"365", title:"The 365-day comeback", kind:"Account recovery", cats:["recovery"], date:"Dec 2025", img:"media-365-day-comeback.jpg", link:IG+"/p/DRxc4YfEwKg/",
+  /* ---------- FACEBOOK ---------- */
+  {id:"365", p:"facebook", t:"recovery", title:"The 365-day comeback", date:"Dec 2025", img:"media-365-day-comeback.jpg", link:IG+"/p/DRxc4YfEwKg/",
    summary:"A Facebook account disabled on 3 December 2024 was recovered on 3 December 2025, exactly one year later.",
-   did:["Rebuilt the case with fully accurate account details","Kept the official review process going long after the usual 180-day window","Followed up until the account was restored"],
+   did:["Rebuilt the case with fully accurate account details","Kept the official review going long after the usual 180-day window","Followed up until the account was restored"],
    result:"Many people believe recovery is impossible after 180 days. This case shows that is not always true."},
-  {id:"fb5", title:"Facebook ID back after 5 months", kind:"Account recovery", cats:["recovery"], date:"Nov 2025", img:"media-facebook-5-months.jpg", link:IG+"/p/DRZ771PAcny/",
-   summary:"A Meta Facebook profile disabled for community-standards reasons, recovered after five long months.",
+  {id:"fb5", p:"facebook", t:"recovery", title:"Facebook ID back after 5 months", date:"Nov 2025", img:"media-facebook-5-months.jpg", link:IG+"/p/DRZ771PAcny/",
+   summary:"A profile disabled for community-standards reasons, recovered after five long months.",
    did:["Reviewed why the account was disabled","Prepared and submitted the right appeal","Stayed with the case for five months"],
    result:"The client got their profile back after months of being locked out."},
-  {id:"pk", title:"Business Instagram restored for a Pakistani brand", kind:"Account recovery", cats:["recovery"], date:"Dec 2025", img:"media-business-instagram-pk.jpg", link:IG+"/p/DSBHKfKE7qS/",
-   summary:"A client from Pakistan reached out on LinkedIn after her Meta business Instagram account was disabled over a suspected security issue.",
-   did:["Verified ownership and every required detail","Reviewed the case carefully before acting","Completed the recovery and restored full business access"],
-   result:"The brand's operations continued without long-term disruption."},
-  {id:"fake37", title:"37 fake accounts removed", kind:"Fake account removal", cats:["fake"], date:"Jan 2026", img:"media-37-fake-accounts.jpg", link:IG+"/p/DUD6nRagZX4/",
-   summary:"A creator with a verified page was being copied by dozens of fake profiles. All 37 were removed.",
-   did:["Collected every fake and duplicate profile","Reported them through Meta's official channels","Worked with Meta support until action was confirmed"],
-   result:"Protected the creator's identity, reach and audience trust."},
-  {id:"imp", title:"Impersonation profile removed", kind:"Fake account removal", cats:["fake"], date:"Apr 2026", img:"media-impersonation-removed.jpg", link:IG+"/p/DXuJekOlIS3/",
-   summary:"A fake Instagram profile was misusing a client's identity. The first report was rejected; the follow-up got it removed.",
-   did:["Documented how the profile copied the client","Re-reported after the first review said it was fine","Confirmed removal for violating Community Standards"],
-   result:"The impersonation account is gone and the client's audience is no longer confused."},
-  {id:"fbpage", title:"Hacked Facebook page back in one day", kind:"Account recovery", cats:["recovery"], date:"Mar 2026", img:"media-hacked-facebook-page.jpg", link:IG+"/p/DVod0FGARnA/",
+  {id:"fbpage", p:"facebook", t:"recovery", title:"Hacked page and Business Manager in one day", date:"Mar 2026", img:"media-hacked-facebook-page.jpg", link:IG+"/p/DVod0FGARnA/",
    summary:"A client's Facebook page was hacked together with its Business Manager.",
    did:["Proper verification and documentation","Direct communication with the Meta team","Restored the page and Business Manager"],
    result:"The whole page was back within one day."},
-  {id:"fb3h", title:"Disabled Facebook back in 3 hours", kind:"Account recovery", cats:["recovery"], date:"May 2026", img:"media-facebook-3-hours.jpg", link:IG+"/p/DYPO9XcFLnJ/",
+  {id:"fb3h", p:"facebook", t:"recovery", title:"Disabled account back in 3 hours", date:"May 2026", img:"media-facebook-3-hours.jpg", link:IG+"/p/DYPO9XcFLnJ/",
    summary:"A returning client's Facebook account was disabled. Full access was back within three hours.",
-   did:["Deep verification checks","Handled the recovery process step by step","Helped secure the account afterwards"],
+   did:["Deep verification checks","Handled the recovery step by step","Helped secure the account afterwards"],
    result:"Account back, business running, no loss."},
-  {id:"ig1d", title:"Disabled Instagram back in one day", kind:"Account recovery", cats:["recovery"], date:"Jun 2026", img:"media-instagram-one-day.jpg", link:IG+"/p/DZDK4RiFFFA/",
-   summary:"An Instagram account disabled for 'account integrity' was reviewed again and restored within a day.",
-   did:["Checked the account details for accuracy","Requested the review through Instagram's official process","Followed up until access was confirmed"],
-   result:"Instagram confirmed the decision was wrong and the account came back."},
-  {id:"li", title:"Restricted LinkedIn account recovered", kind:"Account recovery", cats:["recovery"], date:"Mar 2026", img:"media-linkedin-restricted.jpg", link:IG+"/p/DVyPHlvgVqQ/",
-   summary:"A founder's LinkedIn account was restricted, cutting him off from his network and clients.",
-   did:["Identified the reason for the restriction","Guided the case through LinkedIn's support process","Full access restored"],
-   result:"No more restrictions: he could reconnect with his network and keep building his business."},
-  {id:"2fa", title:"Two-factor lockout resolved", kind:"Account recovery", cats:["recovery","security"], date:"Oct 2025", img:"media-2fa-lockout.jpg", link:IG+"/p/DQMcNwPgTCY/",
-   summary:"A client's Facebook page and Instagram business account were locked behind two-factor authentication, blocking live campaign work.",
-   did:["Verified ownership","Followed Meta's secure recovery procedure","Set up stronger security after access was back"],
-   result:"Campaign uploads and link publishing were working again."},
-  {id:"intl", title:"Hacked Instagram for an international client", kind:"Account recovery", cats:["recovery"], date:"Jun 2025", img:"media-international-instagram.jpg", link:IG+"/p/DLcBfqgBcZe/",
-   summary:"A client abroad lost their Instagram to a hack and could not get it back after several attempts of their own.",
-   did:["Took over the recovery case","Completed identity verification with Instagram","Helped the client lock the account down"],
-   result:"The client regained control of their account and personal brand."},
-  {id:"verified", title:"Meta Verified for a jewellery brand", kind:"Verification", cats:["security"], date:"Aug 2025", img:"media-meta-verified-jewellers.jpg", link:IG+"/p/DM5sp6rhdv3/",
+  {id:"fbhours", p:"facebook", t:"recovery", title:"Suspended account recovered in hours", date:"May 2026", img:"media-fb-disabled-hours.jpg", link:IG+"/p/DYugPkzlEIv/",
+   summary:"A client lost full access after a sudden suspension with a 180-day appeal warning.",
+   did:["Reviewed the suspension reason","Submitted the appeal through Meta's official route","Secured the account once it was back"],
+   result:"Recovered and secured within a few hours, with no risky shortcuts."},
+  {id:"fb1d", p:"facebook", t:"recovery", title:"Disabled ID recovered in one day", date:"Feb 2026", img:"media-fb-id-one-day.jpg", link:IG+"/p/DVN3vrJgVkw/",
+   summary:"A previous client came back after their Facebook ID was disabled for a terms-of-service issue.",
+   did:["Detailed verification of the account","Analysed every part of the case","Resolved it through the right appeal"],
+   result:"Resolved within one day."},
+  {id:"fb10m", p:"facebook", t:"recovery", title:"Recovered in 10 minutes", date:"Nov 2025", img:"media-fb-10-minutes.jpg", link:IG+"/p/DRsOCMLk5Dr/",
+   summary:"A disabled Facebook account connected through Accounts Center, brought back in record time.",
+   did:["Used the connected Accounts Center route","Verified ownership quickly","Confirmed full access"],
+   result:"Recovered within 10 minutes."},
+  {id:"fbcopy", p:"facebook", t:"recovery", title:"Copyright-disabled page restored", date:"Feb 2026", img:"media-fb-page-copyright.jpg", link:IG+"/p/DUS_5hlATHB/",
+   summary:"A creator's page was disabled after a copyright report.",
+   did:["Reviewed the copyright claim","Filed the copyright appeal form","Followed up with Meta until the page was active"],
+   result:"Page restored within two days."},
+  {id:"fbsusp", p:"facebook", t:"recovery", title:"Suspended business page recovered", date:"Oct 2025", img:"media-fb-page-suspended.jpg", link:IG+"/p/DQHgYqngf5B/",
+   summary:"A fashion business page with 21K followers was suddenly suspended and falsely disabled.",
+   did:["Prepared the page owner's verification","Appealed the suspension","Restored the page with TechBite"],
+   result:"The business got its page and audience back."},
+  {id:"fbpk", p:"facebook", t:"recovery", title:"Disabled Facebook ID for a Pakistani client", date:"Jul 2025", img:"media-fb-disabled-pakistan.jpg", link:IG+"/p/DL0bhqNzLBu/",
+   summary:"An international client from Pakistan with a disabled Facebook ID.",
+   did:["Remote verification across borders","Appeal through official support","Recovered with TechBite"],
+   result:"Account recovered for a client outside Bangladesh."},
+  {id:"fbdigi", p:"facebook", t:"recovery", title:"Flagged account reactivated", date:"May 2025", img:"media-fb-digihub-recovered.jpg", link:IG+"/p/DJM5mdpBZaf/",
+   summary:"A flagged and disabled Facebook account reactivated after review, handled through DiGiHub.",
+   did:["Contacted Meta support","Provided the right verification","Followed up until reactivation"],
+   result:"Meta confirmed the account was reactivated."},
+  {id:"fake37", p:"facebook", t:"takedown", title:"37 fake accounts removed", date:"Jan 2026", img:"media-37-fake-accounts.jpg", link:IG+"/p/DUD6nRagZX4/",
+   summary:"A creator with a verified page was being copied by dozens of fake profiles. All 37 were removed.",
+   did:["Collected every fake and duplicate profile","Reported them through Meta's official channels","Worked with Meta support until action was confirmed"],
+   result:"Protected the creator's identity, reach and audience trust."},
+  {id:"fbfake", p:"facebook", t:"takedown", title:"Impersonation account taken down", date:"Apr 2026", img:"media-fb-fake-removed.jpg", link:IG+"/p/DXea_IXlLnM/",
+   summary:"A fake Facebook account was actively using a client's identity.",
+   did:["Documented the impersonation","Reported it and continued with Meta support chat","Confirmed the account was taken down"],
+   result:"Meta confirmed the fake account was removed permanently."},
+  {id:"fbdigifake", p:"facebook", t:"takedown", title:"Fake profile disabled", date:"May 2025", img:"media-fb-fake-digihub.jpg", link:IG+"/p/DJM5X40hcl7/",
+   summary:"A profile pretending to be someone else, reported and removed through DiGiHub.",
+   did:["Submitted the identity report","Provided ID verification","Confirmed removal"],
+   result:"Facebook removed the profile for pretending to be someone else."},
+  {id:"verified", p:"facebook", t:"other", title:"Meta Verified for a jewellery brand", date:"Aug 2025", img:"media-meta-verified-jewellers.jpg", link:IG+"/p/DM5sp6rhdv3/",
    summary:"Business Manager and page Meta subscription verification for The Swarnali Jewellers, done with TechBite.",
    did:["Prepared the page and Business Manager","Completed Meta's verification steps","Confirmed verification for all admins"],
    result:"A verified page that customers can trust."},
-  {id:"tiktok", title:"TikTok fake account removal", kind:"Fake account removal", cats:["fake"], date:"May 2026", img:"media-tiktok-ban-service.jpg", link:IG+"/p/DYg0-ywFNIj/",
-   summary:"Reporting fake, impersonation, harassment and trademark-infringing TikTok accounts for creators and brands.",
-   did:["Impersonation and harassment reports","Trademark and copyright reports","Follow-up until TikTok decides"],
+  {id:"taupe", p:"facebook", t:"other", title:"Meta Verified for a beauty shop", date:"Jul 2025", img:"media-meta-verified-taupe.jpg", link:IG+"/p/DMuvgU4hicW/",
+   summary:"Business Manager and Meta subscription verification for Taupe Notch, a cosmetics page with 152K followers.",
+   did:["Business Manager setup check","Meta verification submission","Confirmed for all admins"],
+   result:"Page verified, building more trust with customers."},
+  {id:"unblock", p:"facebook", t:"other", title:"Page post feature unblocked", date:"May 2025", img:"media-fb-post-unblock.jpg", link:IG+"/p/DJM5tYlhzoL/",
+   summary:"A public figure's page was temporarily blocked from posting.",
+   did:["Identified the restriction","Resolved it with Meta support","Fixed other page issues for a media page"],
+   result:"Posting worked again."},
+
+  /* ---------- INSTAGRAM ---------- */
+  {id:"pk", p:"instagram", t:"recovery", title:"Business Instagram for a Pakistani brand", date:"Dec 2025", img:"media-business-instagram-pk.jpg", link:IG+"/p/DSBHKfKE7qS/",
+   summary:"A client from Pakistan reached out on LinkedIn after her business account (218K followers) was disabled.",
+   did:["Verified ownership and every required detail","Reviewed the case carefully before acting","Restored full business access"],
+   result:"The brand's operations continued without long-term disruption."},
+  {id:"ig1d", p:"instagram", t:"recovery", title:"Disabled account back in one day", date:"Jun 2026", img:"media-instagram-one-day.jpg", link:IG+"/p/DZDK4RiFFFA/",
+   summary:"An Instagram account disabled for 'account integrity' was reviewed again and restored within a day.",
+   did:["Checked the account details for accuracy","Requested the review through Instagram's official process","Followed up until access was confirmed"],
+   result:"Instagram said the decision was wrong and the account came back."},
+  {id:"ig3h", p:"instagram", t:"recovery", title:"Brazilian bar account back in 3 hours", date:"Apr 2026", img:"media-ig-3-hours.jpg", link:IG+"/p/DXXPsQFATY1/",
+   summary:"A business account with 42.9K followers in Brazil was disabled.",
+   did:["Verified the business owner","Appealed in the account's own language","Confirmed access"],
+   result:"Recovered within three hours."},
+  {id:"igold", p:"instagram", t:"recovery", title:"Old client, same problem", date:"Jun 2026", img:"media-ig-business-old-client.jpg", link:IG+"/p/DaFH0mkFFYr/",
+   summary:"A year after I first recovered their business account, it was suspended again.",
+   did:["Used the case history","Requested review within the 180-day window","Restored access fast"],
+   result:"Clients come back because it works."},
+  {id:"igcreator", p:"instagram", t:"recovery", title:"Creator account, 88.8K followers", date:"May 2026", img:"media-ig-disabled-creator.jpg", link:IG+"/p/DY-PHYxgRch/",
+   summary:"A creator's account was disabled with no option to request another review.",
+   did:["Found a valid route to appeal","Prepared the creator's verification","Followed up to restoration"],
+   result:"Another disabled account successfully recovered."},
+  {id:"igbali", p:"instagram", t:"recovery", title:"Real-estate business account restored", date:"Jan 2026", img:"media-ig-business-disabled.jpg", link:IG+"/p/DTIy4ZggThw/",
+   summary:"A Bali real-estate group's business account (32.1K followers) was disabled.",
+   did:["Business ID verification","Appeal handled in the account's language","Returning client support"],
+   result:"Business account back online."},
+  {id:"iges", p:"instagram", t:"recovery", title:"Spanish-speaking client recovered", date:"May 2026", img:"media-ig-spanish-client.jpg", link:IG+"/p/DYcEVa7FOEV/",
+   summary:"A returning client's Instagram account was disabled. Case handled and posted in Spanish.",
+   did:["Communicated in the client's language","Requested review","Confirmed reinstatement"],
+   result:"Instagram confirmed: you're back on Instagram."},
+  {id:"intl", p:"instagram", t:"recovery", title:"Hacked account for a client abroad", date:"Jun 2025", img:"media-international-instagram.jpg", link:IG+"/p/DLcBfqgBcZe/",
+   summary:"A client abroad lost their Instagram to a hack and couldn't get it back after several tries.",
+   did:["Took over the recovery case","Completed identity verification","Helped lock the account down"],
+   result:"The client regained control of their account and personal brand."},
+  {id:"igupwork", p:"instagram", t:"recovery", title:"Hacked account via Upwork client", date:"Jul 2025", img:"media-ig-hacked-upwork.jpg", link:IG+"/p/DMNiuJVhUmo/",
+   summary:"A client found me on Upwork after their Instagram was hacked.",
+   did:["Identity verification with Instagram","Removed the hacker's access","Restored the profile"],
+   result:"Account recovered with TechBite."},
+  {id:"2fa", p:"instagram", t:"recovery", title:"Two-factor lockout resolved", date:"Oct 2025", img:"media-2fa-lockout.jpg", link:IG+"/p/DQMcNwPgTCY/",
+   summary:"A business account was locked behind two-factor authentication, blocking live campaign work.",
+   did:["Verified ownership","Followed Meta's secure recovery procedure","Set up stronger security after"],
+   result:"Campaign uploads and link publishing were working again."},
+  {id:"imp", p:"instagram", t:"takedown", title:"Impersonation profile removed", date:"Apr 2026", img:"media-impersonation-removed.jpg", link:IG+"/p/DXuJekOlIS3/",
+   summary:"A fake Instagram profile was misusing a client's identity. The first review said it was fine; the follow-up got it removed.",
+   did:["Documented how the profile copied the client","Re-reported after the first review","Confirmed removal for violating Community Standards"],
+   result:"The impersonation account is gone and the client's audience is no longer confused."},
+
+  /* ---------- TIKTOK ---------- */
+  {id:"tiktok", p:"tiktok", t:"takedown", title:"Fake and impersonation accounts removed", date:"May 2026", img:"media-tiktok-ban-service.jpg", link:IG+"/p/DYg0-ywFNIj/",
+   summary:"Reporting fake, impersonation and trademark-infringing TikTok accounts for creators and brands.",
+   did:["Impersonation reports","Trademark reports","Follow-up until TikTok decides"],
    result:"Accounts removed through TikTok's own reporting process."},
-  {id:"wasnt", title:"It Wasn't You", kind:"Motion design", cats:["design"], date:"2026", img:"media-reel-it-wasnt-you.jpg", link:IG+"/reel/DehhdEPCLco/",
-   summary:"An animated story reel about fake accounts that copy your photo and message your friends asking for money.",
-   did:["Story, script and voice-over","Animated chat screens and profile-clone reveal","Original score and word-by-word captions"],
-   result:"Explains impersonation in 35 seconds, ending with how to get help."},
-  {id:"lumora", title:"Is someone impersonating your brand?", kind:"Motion design", cats:["design"], date:"2026", img:"media-reel-brand-impersonation.jpg", link:IG+"/reel/DetaHstCnwv/",
-   summary:"A 30-second motion film showing how I review, document and report a fake account pretending to be a brand.",
-   did:["Fictional brand so no real company is shown","Animated evidence review and report flow","Original sound design"],
-   result:"An honest explainer of the brand-impersonation removal service."},
-  {id:"fbid", title:"Facebook asking for your ID?", kind:"Motion design", cats:["design","security"], date:"Oct 2026", img:"media-reel-facebook-id.jpg", link:IG+"/reel/DeHQMEDiik4/",
-   summary:"A 38-second reel on why Facebook ID verification fails, and what to check before you upload anything.",
-   did:["Script from real recovery cases","Kinetic typography in my blue security style","Clear do and don't steps for locked accounts"],
-   result:"Helps people avoid the wrong upload that makes recovery harder."},
-  {id:"orm", title:"Online Reputation Management", kind:"Carousel design", cats:["design"], date:"2026", img:"media-orm-carousel.jpg", link:IG+"/p/DWg-SuHAYiW/",
-   summary:"An educational carousel on how one issue can damage a brand built over years, and how ORM protects it.",
-   did:["Copywriting","Carousel layout and typography","Branded personal template"],
-   result:"Part of my series explaining online reputation to business owners."},
-  {id:"guide", title:"5 security mistakes", kind:"Carousel design", cats:["design","security"], date:"2026", img:"media-security-guide.jpg", link:IG+"/p/DeYiVEpFAwq/",
-   summary:"A 7-slide security guide: weak passwords, no two-factor, too many admins and the other mistakes that cost people their accounts.",
-   did:["Security checklist written for non-experts","Seven-slide carousel design","Consistent blue security look"],
-   result:"Practical tips anyone can fix this week."}
+  {id:"ttcopy", p:"tiktok", t:"takedown", title:"Stolen video removed via copyright", date:"Jul 2026", img:"media-tt-copyright.jpg", link:IG+"/p/Daqe1oJgaub/",
+   summary:"Someone's original content was uploaded without permission. Normal reports did nothing.",
+   did:["Filed a proper copyright report","Proved ownership of the original","Confirmed removal"],
+   result:"The post was taken down. It's not about the number of reports, it's the right process."},
+  {id:"ttharass", p:"tiktok", t:"other", title:"Harassment content removed", date:"Aug 2026", img:"media-tt-harassment.jpg", link:IG+"/p/Db2vHHWFNqa/",
+   summary:"Fake profiles, humiliating videos and misused private photos targeting a person on TikTok.",
+   did:["Collected evidence of the harassment","Used the right trademark and copyright channels","Followed TikTok's official support process"],
+   result:"The harmful content was removed."},
+
+  /* ---------- LINKEDIN ---------- */
+  {id:"li", p:"linkedin", t:"recovery", title:"Founder's restricted account recovered", date:"Mar 2026", img:"media-linkedin-restricted.jpg", link:IG+"/p/DVyPHlvgVqQ/",
+   summary:"A founder's LinkedIn account was restricted, cutting him off from his network and clients.",
+   did:["Identified the reason for the restriction","Guided the case through LinkedIn support","Full access restored"],
+   result:"He could reconnect with his network and keep building his business."},
+  {id:"li2", p:"linkedin", t:"recovery", title:"Marketing strategist back on LinkedIn", date:"Feb 2026", img:"media-li-recovered-2.jpg", link:IG+"/p/DUWLlgjE41O/",
+   summary:"A temporary restriction was placed on a strategist's account over suspected misuse.",
+   did:["Opened the support case","Provided the verification LinkedIn asked for","Followed up until the restriction was removed"],
+   result:"LinkedIn removed the restriction and restored full access."},
+  {id:"li3", p:"linkedin", t:"recovery", title:"Restricted account recovered with TechBite", date:"Jul 2025", img:"media-li-techbite.jpg", link:IG+"/p/DMa8QULBXID/",
+   summary:"Another professional locked out of LinkedIn by a restriction.",
+   did:["Appeals intake with LinkedIn support","Verified the user's information","Security tips after recovery"],
+   result:"Restriction removed and access restored."}
 ];
-const FIRST = 9;
-let showAll = false, current = 'all';
-const grid = document.getElementById('workGrid'), moreBtn = document.getElementById('moreBtn');
+
+const PLATFORMS = [
+  {id:"facebook", name:"Facebook"},
+  {id:"instagram", name:"Instagram"},
+  {id:"tiktok", name:"TikTok"},
+  {id:"linkedin", name:"LinkedIn"},
+  {id:"snapchat", name:"Snapchat"},
+  {id:"youtube", name:"YouTube"}
+];
+const TYPES = {
+  recovery:{name:"Account recovery", note:"Hacked, disabled, suspended and restricted accounts brought back."},
+  takedown:{name:"Fake profile takedown", note:"Fake, impersonation and copycat accounts reported and removed."},
+  other:{name:"Other issues", note:"Verification, blocked features, harassment and more."}
+};
+const TIKTOK_TYPES = {takedown:{name:"Removed accounts & content", note:"Fake accounts and stolen videos taken down."}, other:{name:"Other TikTok issues", note:"Harassment and harmful content."}};
+const PER_GROUP = 6;
+const tabs = document.getElementById('platTabs'), panel = document.getElementById('platPanel');
+let currentP = 'facebook';
+const expanded = new Set();
 function esc(t){return String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-function coverHTML(p,eager){
-  if(p.img) return `<div class="cover has-img"><img src="${p.img}" alt="${esc(p.title)}" ${eager?'':'loading="lazy"'}><div class="cmeta"><span>${p.kind}</span><span>${p.date}</span></div></div>`;
-  const [bg,fg,ac]=p.pal;
-  return `<div class="cover" style="--cb:${bg};--cf:${fg};--ca:${ac}"><span class="orb" aria-hidden="true"></span><span class="frame" aria-hidden="true"></span>
-    <div class="cmeta"><span>${p.kind}</span><span>${p.date}</span></div><div class="ct">${p.cover}</div></div>`;
+
+tabs.innerHTML = PLATFORMS.map(pl=>{
+  const n = PROJECTS.filter(p=>p.p===pl.id).length;
+  return `<button class="plat" type="button" role="tab" data-p="${pl.id}" aria-selected="false">
+    <span class="plat-name">${pl.name}</span><span class="plat-count">${n? n+' case'+(n>1?'s':'') : 'Ask me'}</span></button>`;
+}).join('');
+
+function cardHTML(p){
+  return `<button class="card" type="button" data-id="${p.id}" aria-haspopup="dialog">
+    <div class="cover has-img"><img src="${p.img}" alt="${esc(p.title)}" loading="lazy"><div class="cmeta"><span>${typeName(p)}</span><span>${p.date}</span></div></div>
+    <div class="card-body"><span class="label">${platName(p.p)} · ${p.date}</span><h3>${p.title}</h3><p>${p.summary}</p></div></button>`;
 }
-function render(){
-  const list = PROJECTS.filter(p=>current==='all'||p.cats.includes(current));
-  const shown = (showAll||current!=='all') ? list : list.slice(0,FIRST);
-  grid.innerHTML = shown.map(p=>`
-    <button class="card" type="button" data-id="${p.id}" aria-haspopup="dialog">
-      ${coverHTML(p)}
-      <div class="card-body">
-        <span class="label">${p.kind} · ${p.date}</span>
-        <h3>${p.title}</h3>
-        <p>${p.summary}</p>
-      </div>
-    </button>`).join('');
-  moreBtn.hidden = !(current==='all' && !showAll && list.length>FIRST);
-  moreBtn.textContent = `Show all ${list.length} projects`;
+function platName(id){return PLATFORMS.find(x=>x.id===id).name}
+function typeInfo(p,t){return (p==='tiktok' && TIKTOK_TYPES[t]) || TYPES[t]}
+function typeName(p){return typeInfo(p.p,p.t).name}
+function renderPanel(){
+  tabs.querySelectorAll('.plat').forEach(b=>b.setAttribute('aria-selected', b.dataset.p===currentP?'true':'false'));
+  const list = PROJECTS.filter(p=>p.p===currentP);
+  const pname = platName(currentP);
+  if(!list.length){
+    panel.innerHTML = `<div class="plat-empty">
+      <h3>${pname} help</h3>
+      <p>I help with locked, hacked and disabled ${pname} accounts, and with fake profiles using your name. Case studies for ${pname} will be added here soon.</p>
+      <p>Facing a ${pname} problem right now? Send me the details.</p>
+      <a class="btn btn-primary" href="#contact" data-service="Account Recovery" data-platform="${pname}">Get help with ${pname}</a></div>`;
+    return;
+  }
+  panel.innerHTML = ['recovery','takedown','other'].map(t=>{
+    const items = list.filter(p=>p.t===t); if(!items.length) return '';
+    const info = typeInfo(currentP,t), key=currentP+t, open=expanded.has(key);
+    const shown = open? items : items.slice(0,PER_GROUP);
+    const heading = t==='other' ? `Other ${pname} issues` : (currentP==='tiktok' ? `${pname}: ${info.name.toLowerCase()}` : `${pname} ${info.name.toLowerCase()}`);
+    return `<section class="group" aria-label="${heading}">
+      <div class="group-head"><div><h3>${heading}</h3><p>${info.note}</p></div><span class="group-count">${items.length} ${items.length>1?'cases':'case'}</span></div>
+      <div class="work-grid">${shown.map(cardHTML).join('')}</div>
+      ${items.length>PER_GROUP && !open ? `<div class="more-row"><button class="btn btn-ghost" type="button" data-more="${key}">Show all ${items.length}</button></div>`:''}
+    </section>`;
+  }).join('');
 }
-render();
-moreBtn.addEventListener('click',()=>{showAll=true;render();});
-document.querySelectorAll('.filter').forEach(b=>b.addEventListener('click',()=>{
-  document.querySelectorAll('.filter').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));
-  current=b.dataset.f; render();
-}));
+tabs.addEventListener('click',e=>{const b=e.target.closest('.plat'); if(!b) return; currentP=b.dataset.p; renderPanel();});
+panel.addEventListener('click',e=>{
+  const m=e.target.closest('[data-more]'); if(m){expanded.add(m.dataset.more); renderPanel(); return;}
+  const s=e.target.closest('[data-platform]'); if(s){const f=document.getElementById('f-platform'); if(f) f.value=s.dataset.platform; const sv=document.getElementById('f-service'); if(sv) sv.value='Account Recovery';}
+});
+renderPanel();
 
 const dlg=document.getElementById('projDialog'), inner=document.getElementById('dlgInner');
-grid.addEventListener('click',e=>{
+panel.addEventListener('click',e=>{
   const c=e.target.closest('.card'); if(!c) return;
   const p=PROJECTS.find(x=>x.id===c.dataset.id);
-  const linkBtn = p.link
-    ? `<a class="btn btn-primary" href="${p.link}" target="_blank" rel="noopener">View on Instagram</a>`
-    : `<a class="btn btn-primary" href="https://www.instagram.com/asraful.scout/" target="_blank" rel="noopener">More on @asraful.scout</a>`;
-  inner.innerHTML = `${coverHTML(p,true)}
+  inner.innerHTML = `<div class="cover has-img"><img src="${p.img}" alt="${esc(p.title)}"></div>
     <div class="dlg-body">
-      <span class="label">${p.kind} · ${p.date}</span>
+      <span class="label">${platName(p.p)} · ${typeName(p)} · ${p.date}</span>
       <h3 id="dlgTitle">${p.title}</h3>
       <p class="sub">${p.summary}</p>
       <div><h4>What I did</h4><ul class="ticks">${p.did.map(d=>`<li>${d}</li>`).join('')}</ul></div>
       <p class="note">${p.result}</p>
-      <div class="dlg-actions">${linkBtn}<a class="btn btn-ghost" href="#contact" data-close>Get help with a case like this</a></div>
+      <div class="dlg-actions"><a class="btn btn-primary" href="${p.link}" target="_blank" rel="noopener">View on Instagram</a><a class="btn btn-ghost" href="#contact" data-close>Get help with a case like this</a></div>
     </div>`;
   if(typeof dlg.showModal==='function') dlg.showModal(); else dlg.setAttribute('open','');
 });
