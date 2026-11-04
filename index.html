@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Md Asraful Hoque · Social Media Security & Brand Designer</title>
 <meta name="description" content="Md Asraful Hoque — social media manager, account recovery & security specialist, and motion/brand designer in Dhaka, Bangladesh. 500+ accounts recovered, 300+ design clients.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232457F5'/%3E%3Cstop offset='1' stop-color='%237C3AED'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='42' font-family='Arial,sans-serif' font-size='26' font-weight='700' text-anchor='middle' fill='%23fff'%3EAH%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="media-asraful.jpg">
 <link rel="canonical" href="https://mdasrafulhoque.info/">
 <meta name="theme-color" content="#2457F5">
 <meta property="og:type" content="website">
@@ -377,6 +379,43 @@ body.intro-on{overflow:hidden}
 .marquee .track span::after{content:"✦";color:#FF9A4D;font-size:14px}
 @keyframes marq{to{transform:translateX(-50%)}}
 @media(max-width:720px){.marquee .track{font-size:15px;gap:28px}.marquee .track span{gap:28px}}
+
+#progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:70;background:linear-gradient(90deg,var(--primary),var(--violet),var(--accent));transform-origin:0 50%;transform:scaleX(0)}
+.nav-links a{position:relative}
+.nav-links a.active{color:var(--primary)}
+@media(min-width:901px){.nav-links a.active::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;border-radius:2px;background:var(--primary)}}
+.proj,.svc,.id-card{transition:transform .2s ease-out,box-shadow .25s;will-change:transform}
+.modal{position:fixed;inset:0;z-index:90;background:rgba(15,23,42,.55);backdrop-filter:blur(6px);display:grid;place-items:center;padding:20px;opacity:0;transition:opacity .25s}
+.modal.open{opacity:1}
+.modal[hidden]{display:none}
+.m-box{position:relative;width:100%;max-width:880px;max-height:calc(100vh - 40px);overflow:auto;background:#fff;border-radius:24px;box-shadow:0 30px 80px -20px rgba(15,23,42,.5);transform:translateY(20px) scale(.97);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.modal.open .m-box{transform:none}
+.m-close{position:absolute;top:12px;right:12px;z-index:2;width:40px;height:40px;border-radius:50%;background:#fff;box-shadow:var(--shadow);font-size:16px;color:var(--text)}
+.m-body{display:grid;grid-template-columns:1fr 1.1fr}
+.m-img{position:relative;background:var(--bg2);min-height:100%}
+.m-img img{width:100%;height:100%;object-fit:cover;object-position:top;max-height:560px}
+.m-txt{padding:30px}
+.m-txt .cat{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--primary)}
+.m-txt h3{font-size:26px;margin:8px 0 10px}
+.m-sum{color:var(--muted)}
+.m-txt h4{font:700 13px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:20px 0 10px}
+.m-txt ol{list-style:none;counter-reset:s;display:grid;gap:10px}
+.m-txt li{counter-increment:s;display:flex;gap:12px;align-items:flex-start;font-size:15px}
+.m-txt li::before{content:counter(s);flex:0 0 26px;height:26px;border-radius:8px;background:var(--primary-soft);color:var(--primary);font-weight:700;font-size:13px;display:grid;place-items:center}
+.m-res{margin-top:18px;padding:14px 16px;border-radius:14px;background:#E7F8F1;color:#065F46;display:grid;gap:2px;font-size:15px}
+.m-res b{font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.m-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.m-cta .btn{flex:1 1 auto;padding:12px 18px;font-size:14px}
+body.modal-on{overflow:hidden}
+@media(max-width:720px){
+  .modal{padding:0;align-items:end}
+  .m-box{max-height:92vh;border-radius:22px 22px 0 0}
+  .m-body{grid-template-columns:1fr}
+  .m-img img{max-height:300px}
+  .m-txt{padding:22px 18px 28px}
+  .m-txt h3{font-size:22px}
+  .m-cta .btn{flex:1 1 100%}
+}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal,.hero .status,.hero p,.hero .cta-row,.hero .id-card,.hero .platforms{opacity:1;transform:none}.hero h1 .ln>span{transform:none}#intro{display:none}html{scroll-behavior:auto}}
 </style>
 </head>
@@ -403,6 +442,7 @@ body.intro-on{overflow:hidden}
 })();
 </script>
 
+<div id="progress" aria-hidden="true"></div>
 <header id="hdr">
   <div class="wrap nav">
     <a href="#top" class="logo"><span class="mark">AH</span><div>Asraful Hoque<small>@asraful.scout</small></div></a>
@@ -654,6 +694,9 @@ body.intro-on{overflow:hidden}
     <nav><a href="https://www.behance.net/designwithasraful" target="_blank" rel="noopener">Behance</a><a href="https://www.instagram.com/asraful.scout/" target="_blank" rel="noopener">Instagram</a><a href="https://www.linkedin.com/in/scoutasraful/" target="_blank" rel="noopener">LinkedIn</a><a href="https://facebook.com/hoquee.asraful" target="_blank" rel="noopener">Facebook</a></nav>
   </div>
 </footer>
+<div class="modal" id="caseModal" role="dialog" aria-modal="true" aria-labelledby="caseTitle" hidden>
+  <div class="m-box"><button class="m-close" aria-label="Close">✕</button><div id="caseBody" class="m-body"></div></div>
+</div>
 <a class="wa-float" href="https://wa.me/8801818597320" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.8-1.1-4.6-4-4.8-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.3.4c-.1.1-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg></a>
 
 <script>
@@ -752,11 +795,12 @@ body.intro-on{overflow:hidden}
 ["linkedin","recovery","Marketing strategist back on LinkedIn","Feb 2026","li-recovered-2","DUWLlgjE41O","A temporary restriction was placed on a strategist's account over suspected misuse."],
 ["linkedin","recovery","Restricted account recovered with TechBite","Jul 2025","li-techbite","DMa8QULBXID","Another professional locked out of LinkedIn by a restriction."]
   ];
+  var DID = [[["Rebuilt the case with fully accurate account details", "Kept the official review going long after the usual 180-day window", "Followed up until the account was restored"], "Many people believe recovery is impossible after 180 days. This case shows that is not always true."], [["Reviewed why the account was disabled", "Prepared and submitted the right appeal", "Stayed with the case for five months"], "The client got their profile back after months of being locked out."], [["Proper verification and documentation", "Direct communication with the Meta team", "Restored the page and Business Manager"], "The whole page was back within one day."], [["Deep verification checks", "Handled the recovery step by step", "Helped secure the account afterwards"], "Account back, business running, no loss."], [["Reviewed the suspension reason", "Submitted the appeal through Meta's official route", "Secured the account once it was back"], "Recovered and secured within a few hours, with no risky shortcuts."], [["Detailed verification of the account", "Analysed every part of the case", "Resolved it through the right appeal"], "Resolved within one day."], [["Used the connected Accounts Center route", "Verified ownership quickly", "Confirmed full access"], "Recovered within 10 minutes."], [["Reviewed the copyright claim", "Filed the copyright appeal form", "Followed up with Meta until the page was active"], "Page restored within two days."], [["Prepared the page owner's verification", "Appealed the suspension", "Restored the page with TechBite"], "The business got its page and audience back."], [["Remote verification across borders", "Appeal through official support", "Recovered with TechBite"], "Account recovered for a client outside Bangladesh."], [["Contacted Meta support", "Provided the right verification", "Followed up until reactivation"], "Meta confirmed the account was reactivated."], [["Collected every fake and duplicate profile", "Reported them through Meta's official channels", "Worked with Meta support until action was confirmed"], "Protected the creator's identity, reach and audience trust."], [["Documented the impersonation", "Reported it and continued with Meta support chat", "Confirmed the account was taken down"], "Meta confirmed the fake account was removed permanently."], [["Submitted the identity report", "Provided ID verification", "Confirmed removal"], "Facebook removed the profile for pretending to be someone else."], [["Prepared the page and Business Manager", "Completed Meta's verification steps", "Confirmed verification for all admins"], "A verified page that customers can trust."], [["Business Manager setup check", "Meta verification submission", "Confirmed for all admins"], "Page verified, building more trust with customers."], [["Identified the restriction", "Resolved it with Meta support", "Fixed other page issues for a media page"], "Posting worked again."], [["Verified ownership and every required detail", "Reviewed the case carefully before acting", "Restored full business access"], "The brand's operations continued without long-term disruption."], [["Checked the account details for accuracy", "Requested the review through Instagram's official process", "Followed up until access was confirmed"], "Instagram said the decision was wrong and the account came back."], [["Verified the business owner", "Appealed in the account's own language", "Confirmed access"], "Recovered within three hours."], [["Used the case history", "Requested review within the 180-day window", "Restored access fast"], "Clients come back because it works."], [["Found a valid route to appeal", "Prepared the creator's verification", "Followed up to restoration"], "Another disabled account successfully recovered."], [["Business ID verification", "Appeal handled in the account's language", "Returning client support"], "Business account back online."], [["Communicated in the client's language", "Requested review", "Confirmed reinstatement"], "Instagram confirmed: you're back on Instagram."], [["Took over the recovery case", "Completed identity verification", "Helped lock the account down"], "The client regained control of their account and personal brand."], [["Identity verification with Instagram", "Removed the hacker's access", "Restored the profile"], "Account recovered with TechBite."], [["Verified ownership", "Followed Meta's secure recovery procedure", "Set up stronger security after"], "Campaign uploads and link publishing were working again."], [["Documented how the profile copied the client", "Re-reported after the first review", "Confirmed removal for violating Community Standards"], "The impersonation account is gone and the client's audience is no longer confused."], [["Impersonation reports", "Trademark reports", "Follow-up until TikTok decides"], "Accounts removed through TikTok's own reporting process."], [["Filed a proper copyright report", "Proved ownership of the original", "Confirmed removal"], "The post was taken down. It's not about the number of reports, it's the right process."], [["Collected evidence of the harassment", "Used the right trademark and copyright channels", "Followed TikTok's official support process"], "The harmful content was removed."], [["Identified the reason for the restriction", "Guided the case through LinkedIn support", "Full access restored"], "He could reconnect with his network and keep building his business."], [["Opened the support case", "Provided the verification LinkedIn asked for", "Followed up until the restriction was removed"], "LinkedIn removed the restriction and restored full access."], [["Appeals intake with LinkedIn support", "Verified the user's information", "Security tips after recovery"], "Restriction removed and access restored."]];
   var PNAME = {facebook:"Facebook",instagram:"Instagram",tiktok:"TikTok",linkedin:"LinkedIn"};
   var TNAME = {recovery:"Recovered",takedown:"Fake removed",other:"Security & verification"};
   var LABEL = {logo:"Logo Design",social:"Social Media",banner:"Cover & Banner",print:"Print & Apparel"};
   var GROUPS = {
-    rec:{label:"Account Recovery & Security",items:C.map(function(c){return {type:"case",c:c};}),
+    rec:{label:"Account Recovery & Security",items:C.map(function(c,i){return {type:"case",c:c,i:i};}),
       subs:[["all","All cases"],["facebook","Facebook"],["instagram","Instagram"],["tiktok","TikTok"],["linkedin","LinkedIn"],["takedown","Fake profile takedowns"],["other","Verification & other"]],
       match:function(it,s){return s==="all"||it.c[0]===s||it.c[1]===s;}},
     des:{label:"Design Work",items:D.map(function(d){return {type:"design",d:d};}),
@@ -777,7 +821,7 @@ body.intro-on{overflow:hidden}
   fbar.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;sub=b.dataset.s;shown=PAGE;drawSubs();render();});
   function card(it){
     if(it.type==="case"){var c=it.c;
-      return '<a class="proj" href="'+IG+'p/'+c[5]+'/" target="_blank" rel="noopener"><div class="thumb case"><img loading="lazy" src="media-'+c[4]+'.jpg" alt="'+esc(c[2])+'" width="404" height="316"><span class="pbadge '+c[0]+'">'+PNAME[c[0]]+'</span></div><div class="meta"><span class="cat">'+TNAME[c[1]]+' · '+c[3]+'</span><h3>'+esc(c[2])+'</h3><span class="client">'+esc(c[6])+'</span><span class="open">Read the full case ↗</span></div></a>';
+      return '<a class="proj" data-case="'+it.i+'" href="'+IG+'p/'+c[5]+'/" target="_blank" rel="noopener"><div class="thumb case"><img loading="lazy" src="media-'+c[4]+'.jpg" alt="'+esc(c[2])+'" width="404" height="316"><span class="pbadge '+c[0]+'">'+PNAME[c[0]]+'</span></div><div class="meta"><span class="cat">'+TNAME[c[1]]+' · '+c[3]+'</span><h3>'+esc(c[2])+'</h3><span class="client">'+esc(c[6])+'</span><span class="open">See what I did →</span></div></a>';
     }
     var d=it.d;
     return '<a class="proj" href="'+BE+d[4]+'" target="_blank" rel="noopener"><div class="thumb"><img loading="lazy" src="'+IMG+d[3]+'" alt="'+esc(d[0]+" – "+d[1])+'" width="404" height="316"></div><div class="meta"><span class="cat">'+LABEL[d[2]]+'</span><h3>'+esc(d[0])+'</h3><span class="client">'+esc(d[1])+'</span><span class="open">View on Behance ↗</span></div></a>';
@@ -790,6 +834,46 @@ body.intro-on{overflow:hidden}
   }
   more.onclick=function(){shown+=PAGE;render();};
   drawGroups();drawSubs();render();
+
+
+  // case detail modal
+  var modal=document.getElementById("caseModal"),mBody=document.getElementById("caseBody"),lastFocus=null;
+  function openCase(i){
+    var c=C[i],d=DID[i]||[[],""];
+    mBody.innerHTML='<div class="m-img"><img src="media-'+c[4]+'.jpg" alt="'+esc(c[2])+'"><span class="pbadge '+c[0]+'">'+PNAME[c[0]]+'</span></div>'+
+      '<div class="m-txt"><span class="cat">'+TNAME[c[1]]+' · '+c[3]+'</span><h3 id="caseTitle">'+esc(c[2])+'</h3><p class="m-sum">'+esc(c[6])+'</p>'+
+      '<h4>What I did</h4><ol>'+d[0].map(function(x){return '<li>'+esc(x)+'</li>';}).join("")+'</ol>'+
+      '<div class="m-res"><b>Result</b><span>'+esc(d[1])+'</span></div>'+
+      '<div class="m-cta"><a class="btn btn-primary" href="'+IG+'p/'+c[5]+'/" target="_blank" rel="noopener">View original post ↗</a>'+
+      '<a class="btn btn-wa" href="https://wa.me/8801818597320?text='+encodeURIComponent("Hi Asraful, I have a similar "+PNAME[c[0]]+" problem: ")+'" target="_blank" rel="noopener">I have a similar problem</a></div></div>';
+    lastFocus=document.activeElement;modal.hidden=false;document.body.classList.add("modal-on");
+    requestAnimationFrame(function(){modal.classList.add("open");modal.querySelector(".m-close").focus();});
+  }
+  function closeCase(){modal.classList.remove("open");document.body.classList.remove("modal-on");setTimeout(function(){modal.hidden=true;},250);if(lastFocus)lastFocus.focus();}
+  grid.addEventListener("click",function(e){var a=e.target.closest("[data-case]");if(!a||e.metaKey||e.ctrlKey)return;e.preventDefault();openCase(+a.dataset.case);});
+  modal.addEventListener("click",function(e){if(e.target===modal||e.target.closest(".m-close"))closeCase();});
+  addEventListener("keydown",function(e){if(e.key==="Escape"&&!modal.hidden)closeCase();});
+
+  // count-up stats
+  var counted=false,band=document.querySelector(".band");
+  function countUp(){if(counted)return;counted=true;
+    document.querySelectorAll(".band-grid b").forEach(function(b){var txt=b.textContent,m=txt.match(/\d+/);if(!m)return;var end=+m[0],suf=txt.replace(m[0],""),t0=null;
+      function step(t){if(!t0)t0=t;var k=Math.min(1,(t-t0)/1400),v=Math.round(end*(1-Math.pow(1-k,3)));b.textContent=v+suf;if(k<1)requestAnimationFrame(step);}
+      requestAnimationFrame(step);});}
+  if("IntersectionObserver" in window&&band){new IntersectionObserver(function(es,o){if(es[0].isIntersecting){countUp();o.disconnect();}},{threshold:.4}).observe(band);}
+
+  // scroll progress + active nav
+  var prog=document.getElementById("progress"),links=[].slice.call(document.querySelectorAll(".nav-links a")),secs=links.map(function(a){return document.querySelector(a.getAttribute("href"));});
+  function onScroll(){var h=document.documentElement,max=h.scrollHeight-h.clientHeight;prog.style.transform="scaleX("+(max>0?h.scrollTop/max:0)+")";
+    var y=scrollY+120,cur=-1;secs.forEach(function(s,i){if(s&&s.offsetTop<=y)cur=i;});links.forEach(function(a,i){a.classList.toggle("active",i===cur);});}
+  addEventListener("scroll",onScroll,{passive:true});onScroll();
+
+  // 3D tilt on cards (mouse only)
+  if(matchMedia("(pointer:fine)").matches&&!matchMedia("(prefers-reduced-motion: reduce)").matches){
+    document.addEventListener("pointermove",function(e){var c=e.target.closest(".proj,.svc,.id-card");if(!c)return;var r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+      c.style.transform="perspective(900px) rotateX("+(-y*5)+"deg) rotateY("+(x*6)+"deg) translateY(-4px)";});
+    document.addEventListener("pointerout",function(e){var c=e.target.closest(".proj,.svc,.id-card");if(c&&!c.contains(e.relatedTarget))c.style.transform="";});
+  }
 
   // nav
   var hdr=document.getElementById("hdr");
