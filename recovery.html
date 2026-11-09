@@ -234,6 +234,10 @@
   .direct-contact b{color:var(--fg);font-weight:600}
   .form .btn.primary{width:100%;margin-top:4px}
   .form .note{color:var(--muted);font-size:12.5px;text-align:center;margin-top:14px}
+  .safety{display:flex;gap:9px;align-items:flex-start;font-size:13px;line-height:1.5;color:var(--fg);
+    background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
+    border-radius:11px;padding:11px 13px;margin:6px 0 16px}
+  .safety span{flex:none}
   .result{margin-top:16px;padding:18px;border-radius:12px;background:var(--accent-soft);
     border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);font-size:14.5px}
   .result h4{font-family:var(--font-display);margin:0 0 8px;font-size:16px}
@@ -520,10 +524,38 @@
           <option>Hacked assets</option>
           <option>Something else</option>
         </select></div>
+      <div class="row2">
+        <div class="field"><label for="platform">Platform</label>
+          <select id="platform" name="platform">
+            <option>Facebook</option>
+            <option>Instagram</option>
+            <option>Facebook + Instagram</option>
+            <option>Business Manager / Portfolio</option>
+            <option>Google Ads</option>
+            <option>Other</option>
+          </select></div>
+        <div class="field"><label for="urgency">How urgent?</label>
+          <select id="urgency" name="urgency">
+            <option>Routine review</option>
+            <option>Time sensitive</option>
+            <option>Business disrupted right now</option>
+            <option>Upcoming launch / deadline</option>
+            <option>Possible ongoing unauthorized access</option>
+          </select></div>
+      </div>
       <div class="field"><label for="ids">Ad Account / Business Manager ID</label>
         <input id="ids" name="ids" type="text" placeholder="Optional, but speeds things up"></div>
       <div class="field"><label for="details">Case details</label>
         <textarea id="details" name="details" placeholder="What happened, when it started, and any recent changes"></textarea></div>
+      <div class="field"><label for="budget">Budget range (optional)</label>
+        <select id="budget" name="budget">
+          <option>Not sure yet</option>
+          <option>Under $100</option>
+          <option>$100 – $300</option>
+          <option>$300 – $700</option>
+          <option>$700+</option>
+        </select></div>
+      <p class="safety"><span>🔒</span>Never share your password, login code (OTP) or backup codes here — I'll never ask for them, and no real specialist should.</p>
       <button class="btn primary" type="submit">Prepare my case</button>
       <p class="note">Confidential &amp; secure · Response within 1 business day</p>
       <div class="result" id="result" hidden>
@@ -584,12 +616,16 @@
     e.preventDefault();
     var g=function(id){return (document.getElementById(id).value||'').trim();};
     if(!g('name')||!g('email')){ document.getElementById(g('name')?'email':'name').focus(); return; }
+    var v=function(id){return document.getElementById(id).value;};
     var text='New account recovery case\n'+
       '——————————————\n'+
       'Name: '+g('name')+'\n'+
       'Contact: '+g('email')+'\n'+
-      'Issue: '+document.getElementById('issue').value+'\n'+
+      'Issue: '+v('issue')+'\n'+
+      'Platform: '+v('platform')+'\n'+
+      'Urgency: '+v('urgency')+'\n'+
       'Account/BM ID: '+(g('ids')||'—')+'\n'+
+      'Budget: '+v('budget')+'\n'+
       'Details: '+(g('details')||'—');
     document.getElementById('summary').textContent=text;
     var box=document.getElementById('result'); box.hidden=false;
