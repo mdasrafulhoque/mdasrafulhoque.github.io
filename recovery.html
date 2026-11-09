@@ -251,6 +251,11 @@
   .foot a:hover{color:var(--accent)}
   .foot .cr{color:var(--muted);font-size:13.5px}
 
+  /* scroll reveal — only active when JS runs, so content stays visible without it */
+  .js .reveal{opacity:0;transform:translateY(18px);
+    transition:opacity .6s ease, transform .6s cubic-bezier(.22,1,.36,1)}
+  .js .reveal.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){.js .reveal,.js .reveal.in{opacity:1;transform:none;transition:none}}
   @media(prefers-reduced-motion:reduce){*{transition:none!important}}
   :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 </style>
@@ -598,6 +603,30 @@
     function sel(){ var r=document.createRange(); r.selectNodeContents(document.getElementById('summary'));
       var s=getSelection(); s.removeAllRanges(); s.addRange(r); }
   });
+
+  // motion: reveal each section's content on scroll (hero stays static).
+  // Scroll-based so fast/jump scrolling never leaves a section stuck hidden.
+  (function(){
+    var root=document.documentElement; root.classList.add('js');
+    var targets=[];
+    document.querySelectorAll('.band > .wrap:not(.hero)').forEach(function(w){
+      [].slice.call(w.children).forEach(function(c,i){
+        c.classList.add('reveal');
+        c.style.transitionDelay=(Math.min(i,4)*70)+'ms';
+        targets.push(c);
+      });
+    });
+    function reveal(){
+      var vh=window.innerHeight||root.clientHeight;
+      for(var i=targets.length-1;i>=0;i--){
+        if(targets[i].getBoundingClientRect().top < vh*0.88){ targets[i].classList.add('in'); targets.splice(i,1); }
+      }
+    }
+    reveal();
+    var tick=false;
+    addEventListener('scroll',function(){ if(!tick){tick=true;requestAnimationFrame(function(){reveal();tick=false;});} },{passive:true});
+    addEventListener('resize',reveal,{passive:true});
+  })();
 </script>
 </body>
 </html>
