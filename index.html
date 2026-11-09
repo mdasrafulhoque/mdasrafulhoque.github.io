@@ -448,6 +448,7 @@ body.modal-on{overflow:hidden}
     <a href="#top" class="logo"><span class="mark">AH</span><div>Asraful Hoque<small>@asraful.scout</small></div></a>
     <nav class="nav-links" id="navLinks">
       <a href="#about">About</a>
+      <a href="/recovery.html">Recovery</a>
       <a href="#services">Social Media</a>
       <a href="#design">Design</a>
       <a href="#work">Portfolio</a>
@@ -468,7 +469,7 @@ body.modal-on{overflow:hidden}
       <h1><span class="ln"><span>Protect it.</span></span><span class="ln"><span>Grow it.</span></span><span class="ln"><span><em class="grad">Make it move.</em></span></span></h1>
       <p>I'm <strong>Md Asraful Hoque</strong> — social media manager, account recovery &amp; security specialist, and motion &amp; brand designer. I help brands stay secure online and look sharp doing it.</p>
       <div class="cta-row">
-        <a href="#contact" class="btn btn-primary">Get help with an account →</a>
+        <a href="/recovery.html" class="btn btn-primary">Get help with an account →</a>
         <a href="#work" class="btn btn-ghost">See my work</a>
       </div>
     </div>
@@ -863,7 +864,7 @@ body.modal-on{overflow:hidden}
   if("IntersectionObserver" in window&&band){new IntersectionObserver(function(es,o){if(es[0].isIntersecting){countUp();o.disconnect();}},{threshold:.4}).observe(band);}
 
   // scroll progress + active nav
-  var prog=document.getElementById("progress"),links=[].slice.call(document.querySelectorAll(".nav-links a")),secs=links.map(function(a){return document.querySelector(a.getAttribute("href"));});
+  var prog=document.getElementById("progress"),links=[].slice.call(document.querySelectorAll(".nav-links a")),secs=links.map(function(a){var h=a.getAttribute("href");return h&&h.charAt(0)==="#"?document.querySelector(h):null;});
   function onScroll(){var h=document.documentElement,max=h.scrollHeight-h.clientHeight;prog.style.transform="scaleX("+(max>0?h.scrollTop/max:0)+")";
     var y=scrollY+120,cur=-1;secs.forEach(function(s,i){if(s&&s.offsetTop<=y)cur=i;});links.forEach(function(a,i){a.classList.toggle("active",i===cur);});}
   addEventListener("scroll",onScroll,{passive:true});onScroll();
